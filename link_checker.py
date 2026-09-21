@@ -56,7 +56,25 @@ EMAIL_PASSWORD  = os.environ.get("EMAIL_PASSWORD", "")
 SMTP_SERVER     = os.environ.get("SMTP_SERVER", "smtp.gmail.com")
 SMTP_PORT       = int(os.environ.get("SMTP_PORT", "587"))
 
-USER_AGENT = "CAANZ-LinkChecker/1.0 (+https://www.charteredaccountantsanz.com)"
+USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+2
+ 
+3
+HEADERS = {
+4
+"User-Agent": USER_AGENT,
+5
+"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+6
+"Accept-Language": "en-AU,en;q=0.9",
+7
+"Accept-Encoding": "gzip, deflate, br",
+8
+"Connection": "keep-alive",
+9
+"Upgrade-Insecure-Requests": "1",
+10
+}
 
 # ─────────────────────────────────────────────────────────────────
 #  LOGGING
