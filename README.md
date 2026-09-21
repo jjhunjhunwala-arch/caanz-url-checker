@@ -2,6 +2,8 @@
 
 > Automated monthly crawl of all CA ANZ domains, checking for broken links,
 > server errors, and redirect issues. Emails a formatted report automatically.
+>
+> 📁 Repository: https://github.com/jjhunjhunwala-arch/caanz-url-checker
 
 ---
 
@@ -33,10 +35,10 @@ and emails you the report. ✅
 
 ### Option B — Run Manually (on demand)
 
-1. Go to your GitHub repository
+1. Go to: https://github.com/jjhunjhunwala-arch/caanz-url-checker
 2. Click the **"Actions"** tab at the top
 3. Click **"🔗 CA ANZ Monthly Link Checker"** in the left panel
-4. Click the **"Run workflow"** button (top right, blue button)
+4. Click the **"Run workflow"** dropdown button (top right)
 5. Click the green **"Run workflow"** to confirm
 6. ☕ Wait approximately **60–90 minutes** for the crawl to finish
 7. Check your **email** for the report
@@ -72,46 +74,35 @@ The report has **4 tabs**:
 
 ---
 
-## ⚙️ One-Time Setup (Technical Team — Morgan)
+## ⚙️ Setup Status
 
-### Step 1 — Create GitHub Repository
+### ✅ Already Completed
+- [x] GitHub repository created: `jjhunjhunwala-arch/caanz-url-checker`
+- [x] `link_checker.py` committed to main branch
+- [x] `.github/workflows/link-checker.yml` committed to main branch
+- [x] GitHub Actions enabled
+- [x] All 5 repository secrets configured (see below)
 
-```bash
-# Create a new private repo on GitHub (e.g., caanz-link-checker)
-# Then add these two files:
-#   link_checker.py
-#   .github/workflows/link-checker.yml
-```
+### 🔐 GitHub Secrets Configured
+Go to: **Settings → Secrets and variables → Actions** to view or update.
 
-### Step 2 — Add GitHub Secrets
+| Secret Name | What it does | Status |
+|-------------|-------------|--------|
+| `EMAIL_FROM` | Gmail address reports are sent FROM | ✅ Set |
+| `EMAIL_TO` | Email address where reports are delivered | ✅ Set |
+| `EMAIL_PASSWORD` | Gmail App Password (not your regular Gmail password) | ✅ Set |
+| `SMTP_SERVER` | `smtp.gmail.com` | ✅ Set |
+| `SMTP_PORT` | `587` | ✅ Set |
 
-Go to your repo → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**
+> **Note:** Currently using a personal Gmail account for sending and receiving reports.
+> To switch to a dedicated mailbox in future, simply update `EMAIL_FROM`, `EMAIL_TO`
+> and `EMAIL_PASSWORD` secrets — no code changes needed.
 
-Add these 5 secrets:
-
-| Secret Name | Example Value | Notes |
-|-------------|---------------|-------|
-| `EMAIL_FROM` | `caanz.linkchecks@gmail.com` | Gmail address to SEND from |
-| `EMAIL_TO` | `juhi.king@charteredaccountantsanz.com` | Where reports are emailed |
-| `EMAIL_PASSWORD` | `abcd efgh ijkl mnop` | Gmail **App Password** (see below) |
-| `SMTP_SERVER` | `smtp.gmail.com` | Leave as is for Gmail |
-| `SMTP_PORT` | `587` | Leave as is for Gmail |
-
-> **To add more recipients later**: Change `EMAIL_TO` to a comma-separated list,
-> or use a distribution group email.
-
-### Step 3 — Gmail App Password Setup
-
-1. Use a dedicated Gmail account (e.g., `caanz.linkchecks@gmail.com`)
-2. Enable **2-Step Verification** on that Gmail account
-3. Go to: [https://myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords)
-4. Create an App Password → select **Mail** + **Other (custom)** → name it "CAANZ Link Checker"
-5. Copy the 16-character password → paste it as the `EMAIL_PASSWORD` secret
-
-### Step 4 — Enable GitHub Actions
-
-- Go to the **Actions** tab → click **"I understand my workflows, go ahead and enable them"**
-- That's it! First automatic run will happen on the 28th. 🎉
+### 🔑 How to Regenerate the Gmail App Password (if needed)
+1. Go to https://myaccount.google.com/apppasswords
+2. Revoke the old one named `CAANZ Link Checker`
+3. Create a new one → copy the 16-character code
+4. Go to repo → **Settings → Secrets → Actions** → click ✏️ next to `EMAIL_PASSWORD` → paste new value
 
 ---
 
@@ -150,10 +141,10 @@ juhi.king@caanz.com, morgan.lindqvist@caanz.com, webcontent@caanz.com
 
 | Problem | Likely Cause | Fix |
 |---------|-------------|-----|
-| Email not received | Secrets not set, or Gmail blocking | Check secrets; try regenerating App Password |
+| Email not received | Gmail blocking or App Password expired | Regenerate App Password and update `EMAIL_PASSWORD` secret |
 | Run taking > 2 hours | Site is very large | Increase `timeout-minutes` in the workflow file |
-| Lots of 403 errors on external links | Bot protection on external sites | These are expected — LinkedIn, Cloudflare sites often block bots |
-| Members pages all showing errors | Expected — login-protected | These are flagged intentionally; filter by domain in Excel |
+| Lots of 403 errors on external links | Bot protection on external sites | Expected — LinkedIn, Cloudflare sites often block bots |
+| Members pages showing errors | Login-protected pages return 401/403 | Expected — filter by domain column in Excel |
 | Workflow doesn't appear in Actions | Actions not enabled | Go to Actions tab and enable |
 | `ModuleNotFoundError` | Dependency issue | Contact tech team to update the `pip install` step |
 
@@ -163,9 +154,9 @@ juhi.king@caanz.com, morgan.lindqvist@caanz.com, webcontent@caanz.com
 
 | Run Type | When | Who triggers |
 |----------|------|-------------|
-| Automatic | 28th of every month, 8am AEST | GitHub Actions (no one) |
-| Manual | Any time | Content manager clicks "Run workflow" |
-| Reports kept for | 90 days | Auto-deleted after |
+| Automatic | 28th of every month, 8am AEST | GitHub Actions (nobody — fully automated) |
+| Manual | Any time | Click "Run workflow" in Actions tab |
+| Reports kept for | 90 days | Auto-deleted after by GitHub |
 
 ---
 
@@ -175,4 +166,4 @@ juhi.king@caanz.com, morgan.lindqvist@caanz.com, webcontent@caanz.com
 |------|--------|
 | Tool Owner / Product Manager | Juhi King |
 | Technical Setup & Maintenance | Morgan Lindqvist |
-| Report Recipients | Juhi King (expand as needed) |
+| Report Recipients | Juhi King (expand via `EMAIL_TO` secret when ready) |
