@@ -1,0 +1,74 @@
+name: 🔗 CA ANZ Monthly Link Checker
+
+# ─────────────────────────────────────────────────────────────────
+#  TRIGGERS
+#  1. Automatic: runs on the 28th of every month at 8am AEST
+#  2. Manual:    content managers click "Run workflow" in GitHub UI
+# ─────────────────────────────────────────────────────────────────
+on:
+  schedule:
+    #        ┌─ min  ┌─ hour (UTC)  ┌─ day   ┌─ month  ┌─ weekday
+    #        │       │              │         │         │
+    - cron: "0      22             28        *         *"
+    # 22:00 UTC = 08:00 AEST (UTC+10) on the 28th of every month
+
+  workflow_dispatch:   # ← This adds the "Run workflow" button in GitHub Actions UI
+    inputs:
+      note:
+        description: "Optional note about why you're running this manually"
+        required: false
+        default: "Manual run by content team"
+
+jobs:
+  link-check:
+    name: Crawl & Check All CA ANZ Links
+    runs-on: ubuntu-latest
+    timeout-minutes: 180   # 3-hour safety cap (6,000 pages + externals can take time)
+
+    steps:
+      # ── 1. Get the code ──────────────────────────────────────────
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      # ── 2. Set up Python ─────────────────────────────────────────
+      - name: 🐍 Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      # ── 3. Install dependencies ───────────────────────────────────
+      - name: 📦 Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install requests beautifulsoup4 openpyxl lxml
+
+      # ── 4. Run the link checker ───────────────────────────────────
+      - name: 🔗 Run link checker
+        env:
+          EMAIL_FROM:     ${{ secrets.EMAIL_FROM }}
+          EMAIL_TO:       ${{ secrets.EMAIL_TO }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          SMTP_SERVER:    ${{ secrets.SMTP_SERVER }}
+          SMTP_PORT:      ${{ secrets.SMTP_PORT }}
+        run: python link_checker.py
+
+      # ── 5. Upload Excel report as a downloadable artifact ─────────
+      #  Even if the email fails, the report is always available here
+      - name: 📊 Upload Excel report
+        uses: actions/upload-artifact@v4
+        if: always()   # Run even if a previous step failed
+        with:
+          name: link-report-${{ github.run_number }}-${{ github.run_attempt }}
+          path: caanz_link_report_*.xlsx
+          retention-days: 90   # Keep reports for 3 months
+
+      # ── 6. Print a quick summary to the Actions log ───────────────
+      - name: ✅ Run complete
+        if: always()
+        run: |
+          echo "================================================"
+          echo "  CA ANZ Link Check — Run Complete"
+          echo "  Triggered by: ${{ github.event_name }}"
+          echo "  Report available in Artifacts above ↑"
+          echo "================================================"
