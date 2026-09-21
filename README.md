@@ -1,4 +1,4 @@
-# 🔗 CA ANZ Broken Link Checker
+# 🔗 Broken Link Checker
 
 > Automated monthly crawl of all CA ANZ domains, checking for broken links,
 > server errors, and redirect issues. Emails a formatted report automatically.
@@ -132,7 +132,7 @@ SEED_DOMAINS = [
 ### To add more email recipients:
 Update the `EMAIL_TO` secret to a comma-separated list:
 ```
-juhi.king@caanz.com, morgan.lindqvist@caanz.com, webcontent@caanz.com
+juhiking@outlook.com
 ```
 
 ---
